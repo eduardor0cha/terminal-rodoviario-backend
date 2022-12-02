@@ -15,7 +15,7 @@ model Usuario {
   nome      String
   username  String   @unique
   email     String   @unique
-  password  String   
+  password  String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
@@ -24,14 +24,14 @@ model Usuario {
 }
 
 model Viacao {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  nome       String
-  cnpj       String   @unique
-  imagem_url String
-  linhas     Linha[]
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  Viagem     Viagem[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome      String
+  cnpj      String   @unique
+  imagemUrl String
+  linhas    Linha[]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  viagem    Viagem[]
 }
 
 model Linha {
@@ -65,7 +65,7 @@ model Viagem {
   horarioAntigo String
   valor         Float
   valorAntigo   Float
-  imagem_url    String
+  imagemUrl     String
   viacao        Viacao   @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())

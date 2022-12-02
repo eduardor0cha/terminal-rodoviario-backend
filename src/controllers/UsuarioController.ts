@@ -20,7 +20,8 @@ router.get("/", async (req, res) => {
     },
   });
 
-  if (!usuarios) return res.status(200).send([]);
+  if (!usuarios)
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
   return res.status(200).send(usuarios);
 });
@@ -34,7 +35,7 @@ router.delete("/delete/:id", async (req, res) => {
     },
   });
 
-  if (!usuario) return res.status(400).send({ error: "Usuário não existe." });
+  if (!usuario) return res.status(400).send({ message: "Usuário não existe." });
 
   const usuarioEditado = await prisma.usuario.update({
     where: {
@@ -45,10 +46,10 @@ router.delete("/delete/:id", async (req, res) => {
     },
   });
 
-  if (usuarioEditado)
-    return res.status(200).send("Usuário deletado com sucesso.");
+  if (!usuarioEditado)
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
-  return res.status(400).send("Não foi possível deletar o usuário.");
+  return res.status(200).send("Usuário deletado com sucesso.");
 });
 
 export default router;

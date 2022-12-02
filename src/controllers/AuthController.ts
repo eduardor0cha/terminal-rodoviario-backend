@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
     }
   }
 
-  return res.status(400).send({ error: "Login ou senha inválido(s)." });
+  return res.status(400).send({ message: "Login ou senha inválido(s)." });
 });
 
 router.post("/register", async (req, res) => {
@@ -55,10 +55,10 @@ router.post("/register", async (req, res) => {
       },
     })
   )
-    return res.status(400).send({ error: "Username já cadastrado." });
+    return res.status(400).send({ message: "Username já cadastrado." });
 
   if (await prisma.usuario.findUnique({ where: { email: email } }))
-    return res.status(400).send({ error: "E-mail já cadastrado." });
+    return res.status(400).send({ message: "E-mail já cadastrado." });
 
   const encryptedPw = await bcrypt.hash(password, 10);
 
