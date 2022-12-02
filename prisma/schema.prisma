@@ -44,6 +44,8 @@ model Linha {
   horarios  Horario[]
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
+
+  @@unique([viacaoId, isActive])
 }
 
 model Horario {

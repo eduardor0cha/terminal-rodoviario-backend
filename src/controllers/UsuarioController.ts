@@ -5,51 +5,60 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.get("/", async (req, res) => {
-  const usuarios = await prisma.usuario.findMany({
-    where: {
-      isActive: true,
-    },
-    select: {
-      id: true,
-      nome: true,
-      username: true,
-      email: true,
-      createdAt: true,
-      password: false,
-      isActive: false,
-    },
-  });
+  try {
+    const usuarios = await prisma.usuario.findMany({
+      where: {
+        isActive: true,
+      },
+      select: {
+        id: true,
+        nome: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        password: false,
+        isActive: false,
+      },
+    });
 
-  if (!usuarios)
+    if (!usuarios)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send(usuarios);
+  } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
-
-  return res.status(200).send(usuarios);
+  }
 });
 
 router.delete("/delete/:id", async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const usuario = await prisma.usuario.findUnique({
-    where: {
-      id: id,
-    },
-  });
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id: String(id),
+      },
+    });
 
-  if (!usuario) return res.status(400).send({ message: "Usuário não existe." });
+    if (!usuario)
+      return res.status(400).send({ message: "Usuário não existe." });
 
-  const usuarioEditado = await prisma.usuario.update({
-    where: {
-      id: id,
-    },
-    data: {
-      isActive: false,
-    },
-  });
+    const usuarioEditado = await prisma.usuario.update({
+      where: {
+        id: String(id),
+      },
+      data: {
+        isActive: false,
+      },
+    });
 
-  if (!usuarioEditado)
+    if (!usuarioEditado)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send("Usuário deletado com sucesso.");
+  } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
-
-  return res.status(200).send("Usuário deletado com sucesso.");
+  }
 });
 
 export default router;
