@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import { FileUploadMiddleware } from "../middleware";
-import { saveImage } from "../utils/ImageUtils";
 
 const router = express.Router();
 const prisma = new PrismaClient();
