@@ -15,7 +15,7 @@ router.get("/:viacaoId/linha/:linhaId/horario", async (req, res) => {
       },
       select: {
         id: true,
-        linhaId: false,
+        linhaId: true,
         horario: true,
         linha: false,
         isActive: false,

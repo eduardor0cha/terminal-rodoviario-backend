@@ -28,9 +28,9 @@ model Viacao {
   nome      String
   cnpj      String   @unique
   imagemUrl String
-  linhas    Linha[]
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  linhas    Linha[]
   viagem    Viagem[]
 }
 
@@ -40,10 +40,10 @@ model Linha {
   pontoA    String
   pontoB    String
   valor     Float
-  viacao    Viacao    @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  horarios  Horario[]
   isActive  Boolean   @default(true)
   createdAt DateTime  @default(now())
+  viacao    Viacao    @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  horarios  Horario[]
 
   @@unique([viacaoId, isActive])
 }
@@ -52,9 +52,9 @@ model Horario {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   linhaId   String
   horario   String
-  linha     Linha    @relation(fields: [linhaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+  linha     Linha    @relation(fields: [linhaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model Viagem {
@@ -68,7 +68,7 @@ model Viagem {
   valor         Float
   valorAntigo   Float
   imagemUrl     String
-  viacao        Viacao   @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
+  viacao        Viacao   @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }

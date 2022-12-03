@@ -1,0 +1,972 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Backend do Terminal Rodoviário",
+    "version": "1.0.11"
+  },
+  "servers": [
+    {
+      "url": "https://terminal-rodoviario-backend.herokuapp.com"
+    },
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação",
+      "description": "Rotas destinadas à autenticação do usuário"
+    },
+    {
+      "name": "Usuário",
+      "description": "Rotas destinadas à administração dos usuários"
+    },
+    {
+      "name": "Viação",
+      "description": "Rotas destinadas à viações"
+    },
+    {
+      "name": "Linha",
+      "description": "Rotas destinadas à linhas das viações"
+    },
+    {
+      "name": "Horário",
+      "description": "Rotas destinadas aos horarios das linhas"
+    },
+    {
+      "name": "Viagem",
+      "description": "Rotas destinadas às viagens"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Loga o usuário com login e senha",
+        "operationId": "loginUsuario",
+        "requestBody": {
+          "description": "Passe o login (email ou username) e a senha",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso seja logado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o login ou a senha estejam incorretos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login ou senha inválido(s)."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Registra um novo usuário",
+        "operationId": "registrarUsuario",
+        "requestBody": {
+          "description": "Passe o login (email ou username) e a senha",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso seja logado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o username ou o e-mail já esteja cadastrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Username já cadastrado": {
+                    "value": {
+                      "message": "Username já cadastrado."
+                    }
+                  },
+                  "E-mail já cadastrado": {
+                    "value": {
+                      "message": "E-mail já cadastrado."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": ["Usuário"],
+        "summary": "Retorna uma lista com todos os usuários ativos",
+        "operationId": "fetchUsuarios",
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Usuario"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/delete/{userId}": {
+      "delete": {
+        "tags": ["Usuário"],
+        "summary": "Deleta um usuário com base no id passado",
+        "operationId": "deleteUsuario",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso o usuário seja excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Usuário deletado com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a um usuário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Usuário não existe."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao": {
+      "get": {
+        "tags": ["Viação"],
+        "summary": "Retorna uma lista com todas as viações ativas",
+        "description": "Returns a single pet",
+        "operationId": "fetchViacoes",
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Viacao"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao/create": {
+      "post": {
+        "tags": ["Viação"],
+        "summary": "Cria uma nova viação",
+        "operationId": "createViacao",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "cnpj": {
+                    "type": "string"
+                  },
+                  "imagem": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso a viação seja criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "nome": {
+                      "type": "string"
+                    },
+                    "cnpj": {
+                      "type": "string"
+                    },
+                    "imagemURl": {
+                      "type": "string"
+                    },
+                    "linhas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso não tenha sido enviada uma imagem ou caso o CPNJ enviado já tenha sido cadastrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Imagem não enviada": {
+                    "value": {
+                      "message": "O campo imagem está vazio."
+                    }
+                  },
+                  "CNPJ já cadastrado": {
+                    "value": {
+                      "message": "CNPJ já cadastrado."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao/{viacaoId}/linha": {
+      "get": {
+        "tags": ["Linha"],
+        "summary": "Retorna uma lista com todas as linhas ativas de uma viação",
+        "operationId": "fetchLinhasByViacaoId",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Linha"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao/{viacaoId}/linha/create": {
+      "post": {
+        "tags": ["Linha"],
+        "summary": "Adiciona uma nova linha a uma viação existente",
+        "operationId": "createLinhaByViacaoId",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pontoA": {
+                    "type": "string"
+                  },
+                  "pontoB": {
+                    "type": "string"
+                  },
+                  "valor": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso a linha seja criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "pontoA": {
+                      "type": "string"
+                    },
+                    "pontoB": {
+                      "type": "string"
+                    },
+                    "valor": {
+                      "type": "number"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "horarios": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao/{viacaoId}/linha/{linhaId}/horario": {
+      "get": {
+        "tags": ["Horário"],
+        "summary": "Retorna uma lista com todos os horários ativos de uma linha",
+        "operationId": "fetchHorariosByLinhaId",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linhaId",
+            "in": "path",
+            "description": "Id da linha",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "linhaId": {
+                        "type": "string"
+                      },
+                      "horario": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viacao/{viacaoId}/linha/{linhaId}/horario/create": {
+      "post": {
+        "tags": ["Horário"],
+        "summary": "Adiciona um novo horário a uma linha existente",
+        "operationId": "createHorarioByLinhaId",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linhaId",
+            "in": "path",
+            "description": "Id da linha",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "horario": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso a linha seja criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "linhaId": {
+                        "type": "string"
+                      },
+                      "horario": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viagem": {
+      "get": {
+        "tags": ["Viagem"],
+        "summary": "Retorna uma lista com todas as viagens ativas",
+        "operationId": "fetchViagens",
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Viagem"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/viagem/create": {
+      "post": {
+        "tags": ["Viagem"],
+        "summary": "Cria uma nova viagem",
+        "operationId": "createViagem",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "viacaoId": {
+                    "type": "string"
+                  },
+                  "destino": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "dataAntiga": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "horario": {
+                    "type": "string"
+                  },
+                  "horarioAntigo": {
+                    "type": "string"
+                  },
+                  "valor": {
+                    "type": "number"
+                  },
+                  "valorAntigo": {
+                    "type": "number"
+                  },
+                  "imagem": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Viagem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Viacao": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "cnpj": {
+            "type": "string"
+          },
+          "imagemUrl": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "linhas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Linha"
+            }
+          }
+        }
+      },
+      "Linha": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "pontoA": {
+            "type": "string"
+          },
+          "pontoB": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "horarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Horario"
+            }
+          }
+        }
+      },
+      "Horario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "horario": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Viagem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "viacaoId": {
+            "type": "string"
+          },
+          "destino": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dataAntinga": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "horario": {
+            "type": "string"
+          },
+          "horarioAntigo": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "number"
+          },
+          "valorAntigo": {
+            "type": "number"
+          },
+          "imagemUrl": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Mensagem": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
