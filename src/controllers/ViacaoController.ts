@@ -17,14 +17,18 @@ router.get("/", async (req, res) => {
         nome: true,
         cnpj: true,
         imagemUrl: true,
+        isActive: false,
+        createdAt: true,
         linhas: {
           select: {
             id: true,
-            viacaoId: true,
+            viacaoId: false,
             pontoA: true,
             pontoB: true,
             valor: true,
             viacao: false,
+            isActive: false,
+            createdAt: true,
             horarios: {
               select: {
                 id: true,
@@ -35,12 +39,8 @@ router.get("/", async (req, res) => {
                 createdAt: true,
               },
             },
-            isActive: false,
-            createdAt: true,
           },
         },
-        isActive: false,
-        createdAt: true,
       },
     });
 
@@ -55,11 +55,11 @@ router.get("/", async (req, res) => {
 
 router.post(
   "/create",
-  FileUploadMiddleware.single("image"),
+  FileUploadMiddleware.single("imagem"),
   async (req, res) => {
     try {
       if (req.file === undefined)
-        return res.status(400).send({ message: "O campo image está vazio." });
+        return res.status(400).send({ message: "O campo imagem está vazio." });
 
       const imagemUrl = `/arquivo/${req.file.filename}`;
 
@@ -85,14 +85,18 @@ router.post(
           nome: true,
           cnpj: true,
           imagemUrl: true,
+          isActive: false,
+          createdAt: true,
           linhas: {
             select: {
               id: true,
-              viacaoId: true,
+              viacaoId: false,
               pontoA: true,
               pontoB: true,
               valor: true,
               viacao: false,
+              isActive: false,
+              createdAt: true,
               horarios: {
                 select: {
                   id: true,
@@ -103,12 +107,8 @@ router.post(
                   createdAt: true,
                 },
               },
-              isActive: false,
-              createdAt: true,
             },
           },
-          isActive: false,
-          createdAt: true,
         },
       });
 

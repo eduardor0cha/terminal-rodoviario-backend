@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
+import SwaggerUi from "swagger-ui-express";
 
 import {
   AuthController,
@@ -13,6 +14,8 @@ import {
 } from "./controllers/index";
 import Grid from "gridfs-stream";
 import mongoose from "mongoose";
+
+import SwaggerDocs from "./swagger.json";
 
 dotenv.config();
 
@@ -26,6 +29,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/docs", SwaggerUi.serve, SwaggerUi.setup(SwaggerDocs));
 
 mongoose.connect(process.env.DATABASE_URL);
 

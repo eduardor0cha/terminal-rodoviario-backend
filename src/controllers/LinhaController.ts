@@ -15,14 +15,22 @@ router.get("/:viacaoId/linha", async (req, res) => {
       },
       select: {
         id: true,
-        viacaoId: true,
+        viacaoId: false,
         pontoA: true,
         pontoB: true,
         valor: true,
         viacao: false,
-        horarios: true,
         isActive: false,
         createdAt: true,
+        horarios: {
+          select: {
+            id: true,
+            linhaId: false,
+            horario: true,
+            isActive: false,
+            createdAt: true,
+          },
+        },
       },
     });
 
@@ -49,25 +57,31 @@ router.post("/:viacaoId/linha/create", async (req, res) => {
       },
       select: {
         id: true,
-        viacaoId: true,
+        viacaoId: false,
         pontoA: true,
         pontoB: true,
         valor: true,
         viacao: false,
-        horarios: true,
         isActive: false,
         createdAt: true,
+        horarios: {
+          select: {
+            id: true,
+            linhaId: false,
+            horario: true,
+            isActive: false,
+            createdAt: true,
+          },
+        },
       },
     });
 
     if (!linha)
-      return res
-        .status(400)
-        .send({ message: "Não foi possível criar a linha." });
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send(linha);
   } catch (err) {
-    return res.status(400).send({ message: "Não foi possível criar a linha." });
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
   }
 });
 

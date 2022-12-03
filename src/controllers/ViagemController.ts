@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
 
 router.post(
   "/create",
-  FileUploadMiddleware.single("image"),
+  FileUploadMiddleware.single("imagem"),
   async (req, res) => {
     try {
       if (req.file === undefined)
