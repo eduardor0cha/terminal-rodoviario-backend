@@ -1,3 +1,4 @@
 import FileUploadMiddleware from "./FileUploadMiddleware";
+import AuthMiddleware from "./AuthMiddleware";
 
-export { FileUploadMiddleware };
+export { FileUploadMiddleware, AuthMiddleware };

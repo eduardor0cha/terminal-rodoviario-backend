@@ -1,6 +1,7 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -22,7 +23,12 @@ router.post("/login", async (req, res) => {
       if (await bcrypt.compare(password, userEmail.password)) {
         delete userEmail.password;
         delete userEmail.isActive;
-        return res.status(200).send(userEmail);
+
+        const token = jwt.sign({ id: userEmail.id }, process.env.JWT_KEY, {
+          expiresIn: "7d",
+        });
+
+        return res.status(200).send({ user: userEmail, token: token });
       }
     }
 
@@ -39,7 +45,12 @@ router.post("/login", async (req, res) => {
       if (await bcrypt.compare(password, userUsername.password)) {
         delete userUsername.password;
         delete userUsername.isActive;
-        return res.status(200).send(userUsername);
+
+        const token = jwt.sign({ id: userUsername.id }, process.env.JWT_KEY, {
+          expiresIn: "7d",
+        });
+
+        return res.status(200).send({ user: userUsername, token: token });
       }
     }
 

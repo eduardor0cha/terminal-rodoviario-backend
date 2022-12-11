@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
-import { FileUploadMiddleware } from "../middleware";
+import { AuthMiddleware, FileUploadMiddleware } from "../middleware";
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+router.use(AuthMiddleware);
 
 router.get("/", async (req, res) => {
   try {
@@ -73,7 +75,7 @@ router.post(
       if (response)
         return res.status(400).send({ message: "CNPJ já cadastrado." });
 
-      const viagem = await prisma.viacao.create({
+      const viacao = await prisma.viacao.create({
         data: {
           nome: String(nome),
           cnpj: String(cnpj),
@@ -111,10 +113,10 @@ router.post(
         },
       });
 
-      if (!viagem)
+      if (!viacao)
         return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
-      return res.status(200).send(viagem);
+      return res.status(200).send(viacao);
     } catch (err) {
       return res.status(500).send({ message: "Algo inesperado aconteceu." });
     }

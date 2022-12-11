@@ -11,14 +11,16 @@ datasource db {
 }
 
 model Usuario {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  nome      String
-  username  String   @unique
-  email     String   @unique
-  password  String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  nome            String
+  username        String          @unique
+  email           String          @unique
+  password        String
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  ViagensMarcadas ViagemMarcada[]
 
+  @@unique([id, isActive])
   @@unique([email, isActive])
   @@unique([username, isActive])
 }
@@ -32,6 +34,9 @@ model Viacao {
   createdAt DateTime @default(now())
   linhas    Linha[]
   viagem    Viagem[]
+
+  @@unique([id, isActive])
+  @@unique([cnpj, isActive])
 }
 
 model Linha {
@@ -45,6 +50,7 @@ model Linha {
   viacao    Viacao    @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   horarios  Horario[]
 
+  @@unique([id, isActive])
   @@unique([viacaoId, isActive])
 }
 
@@ -55,20 +61,36 @@ model Horario {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   linha     Linha    @relation(fields: [linhaId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([id, isActive])
 }
 
 model Viagem {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  viacaoId      String
-  destino       String
-  data          DateTime
-  dataAntiga    DateTime
-  horario       String
-  horarioAntigo String
-  valor         Float
-  valorAntigo   Float
-  imagemUrl     String
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  viacao        Viacao   @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  viacaoId        String
+  destino         String
+  data            DateTime
+  dataAntiga      DateTime
+  horario         String
+  horarioAntigo   String
+  valor           Float
+  valorAntigo     Float
+  imagemUrl       String
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  viacao          Viacao          @relation(fields: [viacaoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  ViagensMarcadas ViagemMarcada[]
+
+  @@unique([id, isActive])
+}
+
+model ViagemMarcada {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  usuarioId String
+  viagemId  String
+  createdAt DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  viagem    Viagem   @relation(fields: [viagemId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@unique([usuarioId, viagemId])
 }
