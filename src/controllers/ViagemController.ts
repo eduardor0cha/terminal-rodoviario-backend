@@ -266,4 +266,25 @@ router.get("/scheduled", async (req, res) => {
   }
 });
 
+router.get("/find", async (req, res) => {
+  try {
+    const { destino } = req.query;
+
+    if (!destino) return res.status(200).send([]);
+
+    const viagens = await prisma.viagem.findMany({
+      where: {
+        destino: {
+          contains: destino.toString(),
+        },
+        isActive: true,
+      },
+    });
+
+    return res.status(200).send(viagens);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
 export default router;

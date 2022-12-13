@@ -1627,6 +1627,86 @@
           }
         ]
       }
+    },
+    "/viagem/find": {
+      "get": {
+        "tags": ["Viagem"],
+        "summary": "Retorna uma lista de viagens com base no filtro passado",
+        "operationId": "findViagensById",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "destino",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "String que servirá como base para a filtragem"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Viagem"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
