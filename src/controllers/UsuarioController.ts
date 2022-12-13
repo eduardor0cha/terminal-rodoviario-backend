@@ -58,7 +58,69 @@ router.delete("/delete/:id", async (req, res) => {
     if (!usuarioEditado)
       return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
-    return res.status(200).send("Usuário deletado com sucesso.");
+    return res.status(200).send({ message: "Usuário deletado com sucesso." });
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.get("/id/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: id,
+          isActive: true,
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        password: false,
+        isActive: false,
+      },
+    });
+
+    if (!usuario)
+      return res.status(500).send({ message: "Usuário não existe." });
+
+    return res.status(200).send(usuario);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.get("/logged", async (req, res) => {
+  try {
+    const userId = req["userId"];
+
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: userId,
+          isActive: true,
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        password: false,
+        isActive: false,
+      },
+    });
+
+    if (!usuario)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send(usuario);
   } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
   }

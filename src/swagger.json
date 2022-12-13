@@ -362,6 +362,162 @@
         ]
       }
     },
+    "/user/id/{userId}": {
+      "get": {
+        "tags": ["Usuário"],
+        "summary": "Retorna um usuário com base no id passado",
+        "operationId": "findUsuarioById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso o usuário seja encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a um usuário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Usuário não existe."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/logged": {
+      "get": {
+        "tags": ["Usuário"],
+        "summary": "Retorna o usuário logado com base no token passado",
+        "operationId": "findLoggedUser",
+        "responses": {
+          "200": {
+            "description": "Caso o usuário seja encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/viacao": {
       "get": {
         "tags": ["Viação"],
