@@ -64,7 +64,7 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-router.get("/id/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -88,37 +88,6 @@ router.get("/id/:id", async (req, res) => {
 
     if (!usuario)
       return res.status(500).send({ message: "Usuário não existe." });
-
-    return res.status(200).send(usuario);
-  } catch (err) {
-    return res.status(500).send({ message: "Algo inesperado aconteceu." });
-  }
-});
-
-router.get("/logged", async (req, res) => {
-  try {
-    const userId = req["userId"];
-
-    const usuario = await prisma.usuario.findUnique({
-      where: {
-        id_isActive: {
-          id: userId,
-          isActive: true,
-        },
-      },
-      select: {
-        id: true,
-        nome: true,
-        username: true,
-        email: true,
-        createdAt: true,
-        password: false,
-        isActive: false,
-      },
-    });
-
-    if (!usuario)
-      return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send(usuario);
   } catch (err) {

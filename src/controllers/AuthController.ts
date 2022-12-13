@@ -2,6 +2,7 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { AuthMiddleware } from "../middleware";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -95,6 +96,39 @@ router.post("/register", async (req, res) => {
         isActive: false,
       },
     });
+
+    return res.status(200).send(usuario);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.use(AuthMiddleware);
+
+router.get("/logged", async (req, res) => {
+  try {
+    const userId = req["userId"];
+
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: userId,
+          isActive: true,
+        },
+      },
+      select: {
+        id: true,
+        nome: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        password: false,
+        isActive: false,
+      },
+    });
+
+    if (!usuario)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send(usuario);
   } catch (err) {
