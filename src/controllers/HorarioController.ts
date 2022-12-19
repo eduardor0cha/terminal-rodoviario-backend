@@ -65,4 +65,38 @@ router.post("/:viacaoId/linha/:linhaId/horario/create", async (req, res) => {
   }
 });
 
+router.delete(
+  "/:viacaoId/linha/:linhaId/horario/:horarioId/delete",
+  async (req, res) => {
+    try {
+      const { horarioId } = req.params;
+
+      const horario = await prisma.horario.findUnique({
+        where: {
+          id: horarioId,
+        },
+      });
+
+      if (!horario)
+        return res.status(400).send({ message: "Horário não existe." });
+
+      const horarioEditado = await prisma.horario.update({
+        where: {
+          id: horarioId,
+        },
+        data: {
+          isActive: false,
+        },
+      });
+
+      if (!horarioEditado)
+        return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+      return res.status(200).send({ message: "Horário deletado com sucesso." });
+    } catch (err) {
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+    }
+  }
+);
+
 export default router;

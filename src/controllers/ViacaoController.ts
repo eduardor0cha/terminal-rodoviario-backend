@@ -21,6 +21,9 @@ router.get("/", async (req, res) => {
         isActive: false,
         createdAt: true,
         linhas: {
+          where: {
+            isActive: true,
+          },
           select: {
             id: true,
             viacaoId: false,
@@ -31,6 +34,9 @@ router.get("/", async (req, res) => {
             isActive: false,
             createdAt: true,
             horarios: {
+              where: {
+                isActive: true,
+              },
               select: {
                 id: true,
                 linhaId: false,
@@ -89,6 +95,9 @@ router.post(
           isActive: false,
           createdAt: true,
           linhas: {
+            where: {
+              isActive: true,
+            },
             select: {
               id: true,
               viacaoId: false,
@@ -99,6 +108,9 @@ router.post(
               isActive: false,
               createdAt: true,
               horarios: {
+                where: {
+                  isActive: true,
+                },
                 select: {
                   id: true,
                   linhaId: false,
@@ -122,5 +134,35 @@ router.post(
     }
   }
 );
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const viacao = await prisma.viacao.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!viacao) return res.status(400).send({ message: "Viação não existe." });
+
+    const viacaoEditada = await prisma.viacao.update({
+      where: {
+        id: id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    if (!viacaoEditada)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send({ message: "Viação deletada com sucesso." });
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
 
 export default router;

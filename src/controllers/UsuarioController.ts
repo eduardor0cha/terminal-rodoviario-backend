@@ -39,7 +39,7 @@ router.delete("/delete/:id", async (req, res) => {
 
     const usuario = await prisma.usuario.findUnique({
       where: {
-        id: String(id),
+        id: id,
       },
     });
 
@@ -48,7 +48,7 @@ router.delete("/delete/:id", async (req, res) => {
 
     const usuarioEditado = await prisma.usuario.update({
       where: {
-        id: String(id),
+        id: id,
       },
       data: {
         isActive: false,
@@ -88,6 +88,80 @@ router.get("/:id", async (req, res) => {
 
     if (!usuario)
       return res.status(500).send({ message: "Usuário não existe." });
+
+    return res.status(200).send(usuario);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.put("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nome, username, email, password } = req.body;
+
+    const response = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: id,
+          isActive: true,
+        },
+      },
+    });
+
+    if (!response)
+      return res.status(400).send({ message: "Usuário não existe." });
+
+    if (username) {
+      const response2 = await prisma.usuario.findUnique({
+        where: {
+          username: username,
+        },
+      });
+
+      if (response2) {
+        return res.status(400).send({ message: "Username já cadastrado." });
+      }
+    }
+
+    if (email) {
+      const response3 = await prisma.usuario.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (response3) {
+        return res.status(400).send({ message: "E-mail já cadastrado." });
+      }
+    }
+
+    const usuario = await prisma.usuario.update({
+      where: {
+        id_isActive: {
+          id: id,
+          isActive: true,
+        },
+      },
+      data: {
+        nome: nome,
+        username: username,
+        email: email,
+        password: password,
+      },
+      select: {
+        id: true,
+        nome: true,
+        username: true,
+        email: true,
+        createdAt: true,
+        password: false,
+        isActive: false,
+      },
+    });
+
+    if (!usuario)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send(usuario);
   } catch (err) {

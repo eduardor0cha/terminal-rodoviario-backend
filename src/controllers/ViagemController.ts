@@ -234,6 +234,9 @@ router.get("/scheduled", async (req, res) => {
       return res.status(400).send({ message: "O usuário não existe." });
 
     const viagensMarcadas = await prisma.viagemMarcada.findMany({
+      where: {
+        usuarioId: userId,
+      },
       select: {
         viagem: {
           select: {
@@ -282,6 +285,36 @@ router.get("/find", async (req, res) => {
     });
 
     return res.status(200).send(viagens);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const viagem = await prisma.viagem.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!viagem) return res.status(400).send({ message: "Viagem não existe." });
+
+    const viagemEditada = await prisma.viagem.update({
+      where: {
+        id: id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    if (!viagemEditada)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send({ message: "Viagem deletada com sucesso." });
   } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
   }

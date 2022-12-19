@@ -146,7 +146,7 @@
         },
         "responses": {
           "200": {
-            "description": "Caso seja logado com sucesso.",
+            "description": "Caso seja criado com sucesso.",
             "content": {
               "application/json": {
                 "schema": {
@@ -518,6 +518,115 @@
         ]
       }
     },
+    "/user/update/{userId}": {
+      "put": {
+        "tags": ["Usuário"],
+        "summary": "Atualiza um usuário ativo",
+        "operationId": "atualizarUsuario",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Todos os atributos são opcionais",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Caso seja atualizado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o usuário não exista, ou o username ou o e-mail já esteja cadastrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Usuário não existe": {
+                    "value": {
+                      "message": "Usuário não existe."
+                    }
+                  },
+                  "Username já cadastrado": {
+                    "value": {
+                      "message": "Username já cadastrado."
+                    }
+                  },
+                  "E-mail já cadastrado": {
+                    "value": {
+                      "message": "E-mail já cadastrado."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/viacao": {
       "get": {
         "tags": ["Viação"],
@@ -671,6 +780,99 @@
                       "message": "CNPJ já cadastrado."
                     }
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/viacao/delete/{viacaoId}": {
+      "delete": {
+        "tags": ["Viação"],
+        "summary": "Deleta uma viação com base no id passado",
+        "operationId": "deleteViacao",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a viação seja excluída com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Viação deletada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a uma viação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Viação não existe."
                 }
               }
             }
@@ -928,6 +1130,108 @@
         ]
       }
     },
+    "/viacao/{viacaoId}/linha/{linhaId}/delete": {
+      "delete": {
+        "tags": ["Linha"],
+        "summary": "Deleta uma linha com base no id passado",
+        "operationId": "deleteLinha",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linhaId",
+            "in": "path",
+            "description": "Id da linha",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a linha seja excluída com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Linha deletada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a uma linha",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Linha não existe."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/viacao/{viacaoId}/linha/{linhaId}/horario": {
       "get": {
         "tags": ["Horário"],
@@ -1097,6 +1401,117 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/viacao/{viacaoId}/linha/{linhaId}/horario/{horarioId}/delete": {
+      "delete": {
+        "tags": ["Horário"],
+        "summary": "Deleta umm horario com base no id passado",
+        "operationId": "deleteHorario",
+        "parameters": [
+          {
+            "name": "viacaoId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linhaId",
+            "in": "path",
+            "description": "Id da linha",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "horarioId",
+            "in": "path",
+            "description": "Id do horário",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso o horário seja excluído com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Horário deletado com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a um horário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Horário não existe."
                 }
               }
             }
@@ -1654,6 +2069,99 @@
                   "items": {
                     "$ref": "#/components/schemas/Viagem"
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/viagem/delete/{viagemId}": {
+      "delete": {
+        "tags": ["Viagem"],
+        "summary": "Deleta uma viagem com base no id passado",
+        "operationId": "deleteViagem",
+        "parameters": [
+          {
+            "name": "viagemId",
+            "in": "path",
+            "description": "Id da viagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a viagem seja excluída com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Viagem deletada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id passado não corresponda a uma viagem",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Viagem não existe."
                 }
               }
             }

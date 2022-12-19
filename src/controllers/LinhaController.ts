@@ -26,6 +26,9 @@ router.get("/:viacaoId/linha", async (req, res) => {
         isActive: false,
         createdAt: true,
         horarios: {
+          where: {
+            isActive: true,
+          },
           select: {
             id: true,
             linhaId: false,
@@ -68,6 +71,9 @@ router.post("/:viacaoId/linha/create", async (req, res) => {
         isActive: false,
         createdAt: true,
         horarios: {
+          where: {
+            isActive: true,
+          },
           select: {
             id: true,
             linhaId: false,
@@ -83,6 +89,36 @@ router.post("/:viacaoId/linha/create", async (req, res) => {
       return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send(linha);
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.delete("/:viacaoId/linha/:linhaId/delete", async (req, res) => {
+  try {
+    const { linhaId } = req.params;
+
+    const linha = await prisma.linha.findUnique({
+      where: {
+        id: linhaId,
+      },
+    });
+
+    if (!linha) return res.status(400).send({ message: "Linha não existe." });
+
+    const linhaEditada = await prisma.linha.update({
+      where: {
+        id: linhaId,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    if (!linhaEditada)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send({ message: "Linha deletada com sucesso." });
   } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
   }
