@@ -144,6 +144,7 @@ router.post("/:id/schedule", async (req, res) => {
       data: {
         usuarioId: userId,
         viagemId: id,
+        confirmed: true,
       },
     });
 
@@ -315,6 +316,119 @@ router.delete("/delete/:id", async (req, res) => {
       return res.status(500).send({ message: "Algo inesperado aconteceu." });
 
     return res.status(200).send({ message: "Viagem deletada com sucesso." });
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.post("/:id/confirm-schedule", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req["userId"];
+
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: userId,
+          isActive: true,
+        },
+      },
+    });
+
+    if (!usuario)
+      return res.status(400).send({ message: "O usuário não existe." });
+
+    const viagem = await prisma.viagem.findUnique({
+      where: {
+        id_isActive: {
+          id: id,
+          isActive: true,
+        },
+      },
+    });
+
+    if (!viagem)
+      return res.status(400).send({ message: "A viagem não existe." });
+
+    const viagemMarcada = await prisma.viagemMarcada.findUnique({
+      where: {
+        usuarioId_viagemId: {
+          usuarioId: userId,
+          viagemId: id,
+        },
+      },
+    });
+
+    if (!viagemMarcada)
+      return res.status(400).send({ message: "Viagem não está marcada." });
+
+    const viagemMarcada2 = await prisma.viagemMarcada.update({
+      where: {
+        usuarioId_viagemId: {
+          usuarioId: userId,
+          viagemId: id,
+        },
+      },
+      data: {
+        confirmed: true,
+      },
+    });
+
+    if (!viagemMarcada2)
+      return res.status(500).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send({ message: "Viagem confirmada com sucesso." });
+  } catch (err) {
+    return res.status(500).send({ message: "Algo inesperado aconteceu." });
+  }
+});
+
+router.get("/pending-confirmation", async (req, res) => {
+  try {
+    const userId = req["userId"];
+
+    const usuario = await prisma.usuario.findUnique({
+      where: {
+        id_isActive: {
+          id: userId,
+          isActive: true,
+        },
+      },
+    });
+
+    if (!usuario)
+      return res.status(400).send({ message: "O usuário não existe." });
+
+    const viagensPendentes = await prisma.viagemMarcada.findMany({
+      where: {
+        usuarioId: userId,
+        confirmed: false,
+      },
+      select: {
+        viagem: {
+          select: {
+            id: true,
+            viacaoId: true,
+            destino: true,
+            data: true,
+            dataAntiga: true,
+            horario: true,
+            horarioAntigo: true,
+            valor: true,
+            valorAntigo: true,
+            imagemUrl: true,
+            viacao: false,
+            isActive: false,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    if (!viagensPendentes)
+      return res.status(200).send({ message: "Algo inesperado aconteceu." });
+
+    return res.status(200).send(viagensPendentes);
   } catch (err) {
     return res.status(500).send({ message: "Algo inesperado aconteceu." });
   }

@@ -2215,6 +2215,221 @@
           }
         ]
       }
+    },
+    "/viagem/{viagemId}/confirm-schedule": {
+      "post": {
+        "tags": ["Viagem"],
+        "summary": "Confirma o agendamento da viagem",
+        "operationId": "confirmScheduleTrip",
+        "parameters": [
+          {
+            "name": "viagemId",
+            "in": "path",
+            "description": "Id da viação",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso a viagem seja confirmada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Viagem confirmada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id definido no token de autorização não pertença a nenhum usuário ativo, caso o viagemId não pertença a uma viagem ativa ou caso a viagem não esteja marcada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Viagem não marcada": {
+                    "value": {
+                      "message": "Viagem não está marcada."
+                    }
+                  },
+                  "O usuário não existe": {
+                    "value": {
+                      "message": "O usuário não existe."
+                    }
+                  },
+                  "A viagem não existe": {
+                    "value": {
+                      "message": "A viagem não existe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/viagem/pending-confirmation": {
+      "get": {
+        "tags": ["Viagem"],
+        "summary": "Retorna uma lista com todas as viagens marcadas e pendentes de confirmação",
+        "operationId": "pendingConfirmationTrips",
+        "responses": {
+          "200": {
+            "description": "Caso a busca seja bem sucedida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Viagem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Caso o id definido no token de autorização não pertença a nenhum usuário ativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "O usuário não existe": {
+                    "value": {
+                      "message": "O usuário não existe."
+                    }
+                  },
+                  "A viagem não existe": {
+                    "value": {
+                      "message": "A viagem não existe."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Caso não tenha sido enviado um token ou caso ele esteja malformatado, expirado ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Mensagem"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Token não enviado": {
+                    "value": {
+                      "message": "Nenhum token foi enviado."
+                    }
+                  },
+                  "Token malformatado, expirado ou inválido": {
+                    "value": {
+                      "message": "Token malformatado, expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Caso ocorra algum erro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mensagem"
+                },
+                "example": {
+                  "message": "Algo inesperado aconteceu."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {

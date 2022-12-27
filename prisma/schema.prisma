@@ -41,7 +41,7 @@ model Viacao {
 
 model Linha {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  viacaoId  String
+  viacaoId  String    @db.ObjectId
   pontoA    String
   pontoB    String
   valor     Float
@@ -56,7 +56,7 @@ model Linha {
 
 model Horario {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  linhaId   String
+  linhaId   String   @db.ObjectId
   horario   String
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -67,7 +67,7 @@ model Horario {
 
 model Viagem {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  viacaoId        String
+  viacaoId        String          @db.ObjectId
   destino         String
   data            DateTime
   dataAntiga      DateTime
@@ -86,8 +86,9 @@ model Viagem {
 
 model ViagemMarcada {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  usuarioId String
-  viagemId  String
+  usuarioId String   @db.ObjectId
+  viagemId  String   @db.ObjectId
+  confirmed Boolean
   createdAt DateTime @default(now())
   usuario   Usuario  @relation(fields: [usuarioId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   viagem    Viagem   @relation(fields: [viagemId], references: [id], onUpdate: Cascade, onDelete: Cascade)
