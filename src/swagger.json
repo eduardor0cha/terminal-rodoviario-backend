@@ -2537,9 +2537,6 @@
           "id": {
             "type": "string"
           },
-          "viacaoId": {
-            "type": "string"
-          },
           "destino": {
             "type": "string"
           },
@@ -2569,6 +2566,9 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "viacao": {
+            "$ref": "#/components/schemas/Viacao"
           }
         }
       },

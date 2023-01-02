@@ -15,7 +15,6 @@ router.get("/", async (req, res) => {
       },
       select: {
         id: true,
-        viacaoId: true,
         destino: true,
         data: true,
         dataAntiga: true,
@@ -24,9 +23,46 @@ router.get("/", async (req, res) => {
         valor: true,
         valorAntigo: true,
         imagemUrl: true,
-        viacao: false,
         isActive: false,
         createdAt: true,
+        viacao: {
+          select: {
+            id: true,
+            nome: true,
+            cnpj: true,
+            imagemUrl: true,
+            isActive: false,
+            createdAt: true,
+            linhas: {
+              where: {
+                isActive: true,
+              },
+              select: {
+                id: true,
+                viacaoId: false,
+                pontoA: true,
+                pontoB: true,
+                valor: true,
+                viacao: false,
+                isActive: false,
+                createdAt: true,
+                horarios: {
+                  where: {
+                    isActive: true,
+                  },
+                  select: {
+                    id: true,
+                    linhaId: false,
+                    horario: true,
+                    linha: false,
+                    isActive: false,
+                    createdAt: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
@@ -74,7 +110,6 @@ router.post(
         },
         select: {
           id: true,
-          viacaoId: true,
           destino: true,
           data: true,
           dataAntiga: true,
@@ -83,9 +118,46 @@ router.post(
           valor: true,
           valorAntigo: true,
           imagemUrl: true,
-          viacao: false,
           isActive: false,
           createdAt: true,
+          viacao: {
+            select: {
+              id: true,
+              nome: true,
+              cnpj: true,
+              imagemUrl: true,
+              isActive: false,
+              createdAt: true,
+              linhas: {
+                where: {
+                  isActive: true,
+                },
+                select: {
+                  id: true,
+                  viacaoId: false,
+                  pontoA: true,
+                  pontoB: true,
+                  valor: true,
+                  viacao: false,
+                  isActive: false,
+                  createdAt: true,
+                  horarios: {
+                    where: {
+                      isActive: true,
+                    },
+                    select: {
+                      id: true,
+                      linhaId: false,
+                      horario: true,
+                      linha: false,
+                      isActive: false,
+                      createdAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       });
 
@@ -242,7 +314,6 @@ router.get("/scheduled", async (req, res) => {
         viagem: {
           select: {
             id: true,
-            viacaoId: true,
             destino: true,
             data: true,
             dataAntiga: true,
@@ -251,9 +322,46 @@ router.get("/scheduled", async (req, res) => {
             valor: true,
             valorAntigo: true,
             imagemUrl: true,
-            viacao: false,
             isActive: false,
             createdAt: true,
+            viacao: {
+              select: {
+                id: true,
+                nome: true,
+                cnpj: true,
+                imagemUrl: true,
+                isActive: false,
+                createdAt: true,
+                linhas: {
+                  where: {
+                    isActive: true,
+                  },
+                  select: {
+                    id: true,
+                    viacaoId: false,
+                    pontoA: true,
+                    pontoB: true,
+                    valor: true,
+                    viacao: false,
+                    isActive: false,
+                    createdAt: true,
+                    horarios: {
+                      where: {
+                        isActive: true,
+                      },
+                      select: {
+                        id: true,
+                        linhaId: false,
+                        horario: true,
+                        linha: false,
+                        isActive: false,
+                        createdAt: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
@@ -408,7 +516,6 @@ router.get("/pending-confirmation", async (req, res) => {
         viagem: {
           select: {
             id: true,
-            viacaoId: true,
             destino: true,
             data: true,
             dataAntiga: true,
@@ -417,9 +524,46 @@ router.get("/pending-confirmation", async (req, res) => {
             valor: true,
             valorAntigo: true,
             imagemUrl: true,
-            viacao: false,
             isActive: false,
             createdAt: true,
+            viacao: {
+              select: {
+                id: true,
+                nome: true,
+                cnpj: true,
+                imagemUrl: true,
+                isActive: false,
+                createdAt: true,
+                linhas: {
+                  where: {
+                    isActive: true,
+                  },
+                  select: {
+                    id: true,
+                    viacaoId: false,
+                    pontoA: true,
+                    pontoB: true,
+                    valor: true,
+                    viacao: false,
+                    isActive: false,
+                    createdAt: true,
+                    horarios: {
+                      where: {
+                        isActive: true,
+                      },
+                      select: {
+                        id: true,
+                        linhaId: false,
+                        horario: true,
+                        linha: false,
+                        isActive: false,
+                        createdAt: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
