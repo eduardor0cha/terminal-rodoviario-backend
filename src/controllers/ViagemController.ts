@@ -391,6 +391,57 @@ router.get("/find", async (req, res) => {
         },
         isActive: true,
       },
+      select: {
+        id: true,
+        destino: true,
+        data: true,
+        dataAntiga: true,
+        horario: true,
+        horarioAntigo: true,
+        valor: true,
+        valorAntigo: true,
+        imagemUrl: true,
+        isActive: false,
+        createdAt: true,
+        viacao: {
+          select: {
+            id: true,
+            nome: true,
+            cnpj: true,
+            imagemUrl: true,
+            isActive: false,
+            createdAt: true,
+            linhas: {
+              where: {
+                isActive: true,
+              },
+              select: {
+                id: true,
+                viacaoId: false,
+                pontoA: true,
+                pontoB: true,
+                valor: true,
+                viacao: false,
+                isActive: false,
+                createdAt: true,
+                horarios: {
+                  where: {
+                    isActive: true,
+                  },
+                  select: {
+                    id: true,
+                    linhaId: false,
+                    horario: true,
+                    linha: false,
+                    isActive: false,
+                    createdAt: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     return res.status(200).send(viagens);
