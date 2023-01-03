@@ -69,6 +69,10 @@ model Viagem {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
   viacaoId        String          @db.ObjectId
   destino         String
+  latPartida      Float
+  longPartida     Float
+  latChegada      Float
+  longChegada     Float
   data            DateTime
   dataAntiga      DateTime
   horario         String

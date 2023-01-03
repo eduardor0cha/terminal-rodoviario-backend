@@ -1652,6 +1652,18 @@
                   "destino": {
                     "type": "string"
                   },
+                  "latPartida": {
+                    "type": "string"
+                  },
+                  "longPartida": {
+                    "type": "string"
+                  },
+                  "latChegada": {
+                    "type": "string"
+                  },
+                  "longChegada": {
+                    "type": "string"
+                  },
                   "data": {
                     "type": "string",
                     "format": "date-time"
@@ -1684,7 +1696,7 @@
         },
         "responses": {
           "200": {
-            "description": "Caso a busca seja bem sucedida",
+            "description": "Caso a viagem seja cadastrada com sucesso",
             "content": {
               "application/json": {
                 "schema": {
@@ -2538,6 +2550,18 @@
             "type": "string"
           },
           "destino": {
+            "type": "string"
+          },
+          "latPartida": {
+            "type": "string"
+          },
+          "longPartida": {
+            "type": "string"
+          },
+          "latChegada": {
+            "type": "string"
+          },
+          "longChegada": {
             "type": "string"
           },
           "data": {
