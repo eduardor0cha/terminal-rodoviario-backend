@@ -1653,16 +1653,16 @@
                     "type": "string"
                   },
                   "latPartida": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "longPartida": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "latChegada": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "longChegada": {
-                    "type": "string"
+                    "type": "number"
                   },
                   "data": {
                     "type": "string",
@@ -2553,16 +2553,16 @@
             "type": "string"
           },
           "latPartida": {
-            "type": "string"
+            "type": "number"
           },
           "longPartida": {
-            "type": "string"
+            "type": "number"
           },
           "latChegada": {
-            "type": "string"
+            "type": "number"
           },
           "longChegada": {
-            "type": "string"
+            "type": "number"
           },
           "data": {
             "type": "string",
