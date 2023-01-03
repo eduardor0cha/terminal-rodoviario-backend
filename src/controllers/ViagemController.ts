@@ -407,7 +407,8 @@ router.get("/find", async (req, res) => {
     const viagens = await prisma.viagem.findMany({
       where: {
         destino: {
-          contains: destino.toString(),
+          contains: destino.toString().trim(),
+          mode: "insensitive",
         },
         isActive: true,
       },
